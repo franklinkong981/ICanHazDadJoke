@@ -1,44 +1,24 @@
-import React, { Component } from "react";
+import React from "react";
 import axios from "axios";
 import Joke from "./Joke";
 import "./JokeList.css";
 
+const DAD_JOKE_URL = "https://icanhazdadjoke.com";
+
 /** List of jokes. */
+const JokeList = ({numJokesToGet=5}) {
+  const [jokes, setJokes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-class JokeList extends Component {
-  static defaultProps = {
-    numJokesToGet: 5
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      jokes: [],
-      isLoading: true
-    };
-
-    this.generateNewJokes = this.generateNewJokes.bind(this);
-    this.vote = this.vote.bind(this);
-  }
-
-  /* at mount, get jokes */
-
-  componentDidMount() {
-    this.getJokes();
-  }
-
-  /* retrieve jokes from API */
-
-  async getJokes() {
+  //call the Dad Joke API to fetch numJokesToGet number of unique jokes, update state to include these jokes.
+  const getJokes = async () => {
     try {
       // load jokes one at a time, adding not-yet-seen jokes
       let jokes = [];
       let seenJokes = new Set();
 
       while (jokes.length < this.props.numJokesToGet) {
-        let res = await axios.get("https://icanhazdadjoke.com", {
-          headers: { Accept: "application/json" }
-        });
+        let res = await axios.get(DAD_JOKE_URL, { headers: { Accept: "application/json" } });
         //res.data is an object containing 3 attributes: id, joke, status.
         let { ...joke } = res.data;
 
@@ -50,30 +30,39 @@ class JokeList extends Component {
         }
       }
 
-      this.setState({ jokes, isLoading: false });
+      this.setJokes(jokes => jokes);
+      this.setIsLoading(isLoading => false);
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
-  /* empty joke list, set to loading state, and then call getJokes */
+  useEffect(() => {
+    getJokes();
+  }, []);
 
-  generateNewJokes() {
-    this.setState({ isLoading: true});
-    this.getJokes();
-  }
+  //empty the state jokes list, set isLoading to true, and call getJokes.
+  const generateNewJokes = () => {
+    setIsLoading(isLoading => true);
+    getJokes();
+  };
 
-  /* change vote for this id by delta (+1 or -1) */
+  //change vote for the joke of a specific id by the delta parameter (upvote: delta = +1, downvote: delta = -1)
+  const vote = (id, delta) => {
+    setJokes(jokes => {
+      return jokes.map(joke =>
+        //For each joke in jokes, if id of joke matches id in parameter, change joke.votes to current joke.votes to delta, otherwise leave entire joke as is.
+        joke.id === id ? { ...joke, votes: joke.votes + delta } : joke
+      );
+    });
+  };
 
-  vote(id, delta) {
-    this.setState(st => ({
-      jokes: st.jokes.map(j =>
-        j.id === id ? { ...j, votes: j.votes + delta } : j
-      )
-    }));
-  }
+  
+};
 
-  /* render: either loading spinner or list of sorted jokes. */
+/*class JokeList extends Component {
+
+  //render: either loading spinner or list of sorted jokes. 
 
   render() {
     let sortedJokes = [...this.state.jokes].sort((a, b) => b.votes - a.votes);
@@ -106,6 +95,6 @@ class JokeList extends Component {
       </div>
     );
   }
-}
+}*/
 
 export default JokeList;
