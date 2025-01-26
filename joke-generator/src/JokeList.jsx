@@ -39,6 +39,7 @@ class JokeList extends Component {
         let res = await axios.get("https://icanhazdadjoke.com", {
           headers: { Accept: "application/json" }
         });
+        //res.data is an object containing 3 attributes: id, joke, status.
         let { ...joke } = res.data;
 
         if (!seenJokes.has(joke.id)) {
