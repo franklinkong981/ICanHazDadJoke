@@ -57,25 +57,19 @@ const JokeList = ({numJokesToGet=5}) {
     });
   };
 
-  
-};
-
-/*class JokeList extends Component {
-
-  //render: either loading spinner or list of sorted jokes. 
-
-  render() {
-    let sortedJokes = [...this.state.jokes].sort((a, b) => b.votes - a.votes);
-    if (this.state.isLoading) {
-      return (
-        <div className="loading">
-          <i className="fas fa-4x fa-spinner fa-spin" />
-        </div>
-      )
-    }
-
+  //Return loading spinner or list of jokes sorted by net votes.
+  let sortedJokes = [jokes].sort((a, b) => b.votes - a.votes);
+  if (isLoading) {
     return (
-      <div className="JokeList">
+      <div className="loading">
+        <i className="fas fa-4x fa-spinner fa-spin" />
+      </div>
+    );
+  }
+
+  //else
+  return (
+    <div className="JokeList">
         <button
           className="JokeList-getmore"
           onClick={this.generateNewJokes}
@@ -92,9 +86,8 @@ const JokeList = ({numJokesToGet=5}) {
             vote={this.vote}
           />
         ))}
-      </div>
-    );
-  }
-}*/
+    </div>
+  );
+};
 
 export default JokeList;
