@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import axios from "axios";
 import Joke from "./Joke";
 import "./JokeList.css";
@@ -70,7 +70,7 @@ const JokeList = ({numJokesToGet=5}) => {
     <div className="JokeList">
         <button className="JokeList-getmore" onClick={generateNewJokes}>Get New Jokes</button>
         {sortedJokes.map(j => (
-          <Joke text={j.joke} key={j.id} id={j.id} votes={j.votes} vote={vote}/>
+          <Joke key={j.id} id={j.id} text={j.joke} votes={j.votes} voteMethod={vote}/>
         ))}
     </div>
   );
