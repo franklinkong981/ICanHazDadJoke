@@ -3,10 +3,8 @@ import axios from "axios";
 import Joke from "./Joke";
 import "./JokeList.css";
 
-const DAD_JOKE_URL = "https://icanhazdadjoke.com";
-
 /** List of jokes. */
-const JokeList = ({numJokesToGet=5}) {
+const JokeList = ({numJokesToGet=5}) => {
   const [jokes, setJokes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -18,7 +16,7 @@ const JokeList = ({numJokesToGet=5}) {
       let seenJokes = new Set();
 
       while (jokes.length < this.props.numJokesToGet) {
-        let res = await axios.get(DAD_JOKE_URL, { headers: { Accept: "application/json" } });
+        let res = await axios.get("https://icanhazdadjoke.com", { headers: { Accept: "application/json" } });
         //res.data is an object containing 3 attributes: id, joke, status.
         let { ...joke } = res.data;
 
@@ -70,21 +68,9 @@ const JokeList = ({numJokesToGet=5}) {
   //else
   return (
     <div className="JokeList">
-        <button
-          className="JokeList-getmore"
-          onClick={this.generateNewJokes}
-        >
-          Get New Jokes
-        </button>
-
+        <button className="JokeList-getmore" onClick={generateNewJokes}>Get New Jokes</button>
         {sortedJokes.map(j => (
-          <Joke
-            text={j.joke}
-            key={j.id}
-            id={j.id}
-            votes={j.votes}
-            vote={this.vote}
-          />
+          <Joke text={j.joke} key={j.id} id={j.id} votes={j.votes} vote={vote}/>
         ))}
     </div>
   );
